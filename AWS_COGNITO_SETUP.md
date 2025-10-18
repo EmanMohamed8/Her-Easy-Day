@@ -55,11 +55,13 @@ After creating the user pool, you'll need these values:
    ```typescript
    const awsconfig = {
      Auth: {
-       region: 'YOUR_REGION', // e.g., 'us-east-1'
-       userPoolId: 'YOUR_USER_POOL_ID', // e.g., 'us-east-1_XXXXXXXXX'
-       userPoolWebClientId: 'YOUR_APP_CLIENT_ID', // Your app client ID
-       mandatorySignIn: true,
-       authenticationFlowType: 'USER_SRP_AUTH'
+       Cognito: {
+         userPoolId: 'YOUR_USER_POOL_ID', // e.g., 'us-east-1_XXXXXXXXX'
+         userPoolClientId: 'YOUR_APP_CLIENT_ID', // Your app client ID
+         loginWith: {
+           email: true,
+         },
+       }
      }
    };
    ```
@@ -102,20 +104,21 @@ For better security, you can use environment variables:
 
 1. Create a `.env` file in your project root:
    ```
-   REACT_APP_AWS_REGION=your-region
    REACT_APP_USER_POOL_ID=your-user-pool-id
-   REACT_APP_USER_POOL_WEB_CLIENT_ID=your-client-id
+   REACT_APP_USER_POOL_CLIENT_ID=your-client-id
    ```
 
 2. Update `aws-exports.ts` to use environment variables:
    ```typescript
    const awsconfig = {
      Auth: {
-       region: process.env.REACT_APP_AWS_REGION,
-       userPoolId: process.env.REACT_APP_USER_POOL_ID,
-       userPoolWebClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID,
-       mandatorySignIn: true,
-       authenticationFlowType: 'USER_SRP_AUTH'
+       Cognito: {
+         userPoolId: process.env.REACT_APP_USER_POOL_ID,
+         userPoolClientId: process.env.REACT_APP_USER_POOL_CLIENT_ID,
+         loginWith: {
+           email: true,
+         },
+       }
      }
    };
    ```

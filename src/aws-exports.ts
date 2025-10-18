@@ -1,13 +1,30 @@
-// AWS Amplify Configuration
-// You'll need to replace these values with your actual Cognito User Pool details
+// AWS Amplify Configuration based on AWS documentation
+// Replace these values with your actual Cognito User Pool details from AWS Console
 
 const awsconfig = {
   Auth: {
-    region: 'us-east-1', // Replace with your region
-    userPoolId: 'us-east-1_XXXXXXXXX', // Replace with your User Pool ID
-    userPoolWebClientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxx', // Replace with your App Client ID
-    mandatorySignIn: true,
-    authenticationFlowType: 'USER_SRP_AUTH'
+    Cognito: {
+      userPoolId: 'us-east-1_iobNhdsOp', // Your User Pool ID from AWS example
+      userPoolClientId: '6ldbib0plt1475cddccq49lgqi', // Your App Client ID from AWS example
+      loginWith: {
+        email: true,
+        username: false,
+      },
+      signUpVerificationMethod: 'code',
+      userAttributes: {
+        email: {
+          required: true,
+        },
+      },
+      allowGuestAccess: false,
+      passwordFormat: {
+        minLength: 8,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireNumbers: true,
+        requireSpecialCharacters: false,
+      },
+    }
   }
 };
 

@@ -46,13 +46,12 @@ const DayDetails: React.FC = () => {
     }));
   };
 
-  const handleAddTask = (text: string, priority: Task['priority']) => {
+  const handleAddTask = (taskData: Omit<Task, 'id' | 'completed' | 'createdAt'>) => {
     const newTask: Task = {
       id: Date.now().toString(),
-      text,
-      priority,
       completed: false,
-      createdAt: new Date()
+      createdAt: new Date(),
+      ...taskData
     };
     
     updateDayData({
@@ -74,10 +73,10 @@ const DayDetails: React.FC = () => {
     });
   };
 
-  const handleEditTask = (taskId: string, text: string, priority: Task['priority']) => {
+  const handleEditTask = (taskId: string, taskData: Omit<Task, 'id' | 'completed' | 'createdAt'>) => {
     updateDayData({
       tasks: currentDayData.tasks.map(task =>
-        task.id === taskId ? { ...task, text, priority } : task
+        task.id === taskId ? { ...task, ...taskData } : task
       )
     });
   };
@@ -185,9 +184,9 @@ const DayDetails: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Left Column - Tasks & Mood */}
-        <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Tasks Section - Takes 2 columns */}
+        <div className="lg:col-span-2 space-y-6">
           <TaskList
             tasks={currentDayData.tasks}
             onAddTask={handleAddTask}
@@ -196,18 +195,21 @@ const DayDetails: React.FC = () => {
             onEditTask={handleEditTask}
           />
           
-          <MoodTracker
-            mood={currentDayData.mood}
-            onSaveMood={handleSaveMood}
-          />
+          {/* Secondary trackers in tasks area */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <MoodTracker
+              mood={currentDayData.mood}
+              onSaveMood={handleSaveMood}
+            />
 
-          <TimeTracker
-            timeEntry={currentDayData.timeEntry}
-            onSaveTime={handleSaveTime}
-          />
+            <TimeTracker
+              timeEntry={currentDayData.timeEntry}
+              onSaveTime={handleSaveTime}
+            />
+          </div>
         </div>
         
-        {/* Middle Column - Health & Sleep */}
+        {/* Right Column - Health, Period & Obstacles */}
         <div className="space-y-6">
           <SleepTracker
             sleepEntry={currentDayData.sleepEntry}
@@ -218,10 +220,7 @@ const DayDetails: React.FC = () => {
             physicalHealthEntry={currentDayData.physicalHealthEntry}
             onSavePhysicalHealth={handleSavePhysicalHealth}
           />
-        </div>
 
-        {/* Right Column - Period & Obstacles */}
-        <div className="space-y-6">
           <PeriodTracker
             periodEntry={currentDayData.periodEntry}
             pregnancyEntry={currentDayData.pregnancyEntry}

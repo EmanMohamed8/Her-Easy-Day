@@ -4,6 +4,13 @@ export interface Task {
   completed: boolean;
   priority: 'low' | 'medium' | 'high';
   createdAt: Date;
+  deadline?: Date;
+  estimatedDuration?: number; // in minutes
+  canSplit?: boolean;
+  mustFinishToday?: boolean;
+  mentalEffort?: 'low' | 'medium' | 'high' | 'very-high';
+  physicalEffort?: 'low' | 'medium' | 'high' | 'very-high';
+  notes?: string;
 }
 
 export interface Mood {

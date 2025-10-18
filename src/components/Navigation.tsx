@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Calendar, User, Moon, LogOut } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
 
-const Navigation: React.FC = () => {
+interface NavigationProps {
+  signOut?: () => void;
+  user?: any;
+}
+
+const Navigation: React.FC<NavigationProps> = ({ signOut, user }) => {
   const location = useLocation();
-  const { user, signOut } = useAuth();
 
   const navItems = [
     { path: '/', icon: Calendar, label: 'Calendar' },
@@ -37,19 +40,22 @@ const Navigation: React.FC = () => {
               </Link>
             ))}
             
-            <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-luna-pink-100">
-              <span className="text-sm text-luna-lavender-600">
-                {user?.email}
-              </span>
-              <button
-                onClick={signOut}
-                className="flex items-center space-x-2 px-3 py-2 text-luna-lavender-700 hover:bg-luna-pink-50 hover:text-luna-pink-600 rounded-lg transition-colors"
-                title="Sign out"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="font-medium">Sign Out</span>
-              </button>
-            </div>
+            {/* User info and sign out */}
+            {user && signOut && (
+              <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-luna-pink-100">
+                <span className="text-sm text-luna-lavender-600">
+                  Welcome, {user.username || user.signInDetails?.loginId}
+                </span>
+                <button
+                  onClick={signOut}
+                  className="flex items-center space-x-2 px-3 py-2 text-luna-lavender-700 hover:bg-luna-pink-50 hover:text-luna-pink-600 rounded-lg transition-colors"
+                  title="Sign out"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="font-medium">Sign Out</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

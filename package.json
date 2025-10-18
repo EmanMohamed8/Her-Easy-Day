@@ -4,30 +4,39 @@
   "private": true,
   "dependencies": {
     "@aws-amplify/ui-react": "^6.13.0",
-    "@types/node": "^16.18.0",
+    "@aws-cdk/aws-cognito": "^1.203.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "aws-amplify": "^6.15.7",
+    "aws-cdk-lib": "^2.220.0",
+    "constructs": "^10.4.2",
     "date-fns": "^2.30.0",
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
+    "@types/node": "^24.8.1",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.24",
-    "tailwindcss": "^3.3.2"
+    "tailwindcss": "^3.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "auth:toggle": "node scripts/toggle-auth.js",
+    "setup-cognito": "node scripts/setup-cognito.js",
+    "check-aws": "node scripts/check-aws-credentials.js",
+    "deploy-cognito": "node scripts/deploy-cognito.js",
+    "destroy-cognito": "cdk destroy --force"
   },
   "eslintConfig": {
     "extends": [
