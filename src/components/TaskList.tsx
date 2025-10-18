@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Check, X, AlertCircle } from 'lucide-react';
+import { Plus, Check, X, AlertCircle, Edit2 } from 'lucide-react';
 import { Task } from '../types';
 
 interface TaskListProps {
@@ -7,17 +7,22 @@ interface TaskListProps {
   onAddTask: (text: string, priority: Task['priority']) => void;
   onToggleTask: (taskId: string) => void;
   onDeleteTask: (taskId: string) => void;
+  onEditTask: (taskId: string, text: string, priority: Task['priority']) => void;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
   tasks,
   onAddTask,
   onToggleTask,
-  onDeleteTask
+  onDeleteTask,
+  onEditTask
 }) => {
   const [newTaskText, setNewTaskText] = useState('');
   const [newTaskPriority, setNewTaskPriority] = useState<Task['priority']>('medium');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editTaskText, setEditTaskText] = useState('');
+  const [editTaskPriority, setEditTaskPriority] = useState<Task['priority']>('medium');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +32,28 @@ const TaskList: React.FC<TaskListProps> = ({
       setNewTaskPriority('medium');
       setShowAddForm(false);
     }
+  };
+
+  const handleEditStart = (task: Task) => {
+    setEditingTaskId(task.id);
+    setEditTaskText(task.text);
+    setEditTaskPriority(task.priority);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editTaskText.trim() && editingTaskId) {
+      onEditTask(editingTaskId, editTaskText.trim(), editTaskPriority);
+      setEditingTaskId(null);
+      setEditTaskText('');
+      setEditTaskPriority('medium');
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingTaskId(null);
+    setEditTaskText('');
+    setEditTaskPriority('medium');
   };
 
   const getPriorityColor = (priority: Task['priority']) => {
@@ -101,46 +128,94 @@ const TaskList: React.FC<TaskListProps> = ({
           <p className="text-luna-lavender-500 text-center py-8">No tasks for this day</p>
         ) : (
           tasks.map(task => (
-            <div
-              key={task.id}
-              className={`flex items-center space-x-3 p-3 rounded-lg border transition-all duration-200 ${
-                task.completed
-                  ? 'bg-green-50 border-green-200'
-                  : 'bg-white border-luna-lavender-200 hover:border-luna-pink-300'
-              }`}
-            >
-              <button
-                onClick={() => onToggleTask(task.id)}
-                className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                  task.completed
-                    ? 'bg-green-500 border-green-500'
-                    : 'border-luna-lavender-300 hover:border-luna-pink-500'
-                }`}
-              >
-                {task.completed && <Check className="w-3 h-3 text-white" />}
-              </button>
-              
-              <div className="flex items-center space-x-2 flex-grow">
-                <span className={getPriorityColor(task.priority)}>
-                  {getPriorityIcon(task.priority)}
-                </span>
-                <span
-                  className={`flex-grow ${
+            <div key={task.id}>
+              {editingTaskId === task.id ? (
+                // Edit form
+                <form onSubmit={handleEditSubmit} className="p-4 bg-luna-pink-50 rounded-lg border border-luna-pink-200">
+                  <input
+                    type="text"
+                    value={editTaskText}
+                    onChange={(e) => setEditTaskText(e.target.value)}
+                    className="w-full p-2 border border-luna-pink-200 rounded-lg mb-3 focus:ring-2 focus:ring-luna-pink-500 focus:border-transparent"
+                    autoFocus
+                  />
+                  <div className="flex items-center justify-between">
+                    <select
+                      value={editTaskPriority}
+                      onChange={(e) => setEditTaskPriority(e.target.value as Task['priority'])}
+                      className="p-2 border border-luna-pink-200 rounded-lg focus:ring-2 focus:ring-luna-pink-500 focus:border-transparent"
+                    >
+                      <option value="low">Low Priority</option>
+                      <option value="medium">Medium Priority</option>
+                      <option value="high">High Priority</option>
+                    </select>
+                    <div className="flex space-x-2">
+                      <button type="submit" className="btn-primary">
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleEditCancel}
+                        className="btn-secondary"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              ) : (
+                // Task display
+                <div
+                  className={`flex items-center space-x-3 p-3 rounded-lg border transition-all duration-200 ${
                     task.completed
-                      ? 'line-through text-luna-lavender-500'
-                      : 'text-luna-lavender-800'
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-white border-luna-lavender-200 hover:border-luna-pink-300'
                   }`}
                 >
-                  {task.text}
-                </span>
-              </div>
-              
-              <button
-                onClick={() => onDeleteTask(task.id)}
-                className="flex-shrink-0 p-1 text-red-500 hover:bg-red-50 rounded transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+                  <button
+                    onClick={() => onToggleTask(task.id)}
+                    className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      task.completed
+                        ? 'bg-green-500 border-green-500'
+                        : 'border-luna-lavender-300 hover:border-luna-pink-500'
+                    }`}
+                  >
+                    {task.completed && <Check className="w-3 h-3 text-white" />}
+                  </button>
+                  
+                  <div className="flex items-center space-x-2 flex-grow">
+                    <span className={getPriorityColor(task.priority)}>
+                      {getPriorityIcon(task.priority)}
+                    </span>
+                    <span
+                      className={`flex-grow ${
+                        task.completed
+                          ? 'line-through text-luna-lavender-500'
+                          : 'text-luna-lavender-800'
+                      }`}
+                    >
+                      {task.text}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-1">
+                    <button
+                      onClick={() => handleEditStart(task)}
+                      className="flex-shrink-0 p-1 text-luna-pink-600 hover:bg-luna-pink-50 rounded transition-colors"
+                      title="Edit task"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onDeleteTask(task.id)}
+                      className="flex-shrink-0 p-1 text-red-500 hover:bg-red-50 rounded transition-colors"
+                      title="Delete task"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))
         )}

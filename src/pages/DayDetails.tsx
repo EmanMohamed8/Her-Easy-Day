@@ -74,6 +74,14 @@ const DayDetails: React.FC = () => {
     });
   };
 
+  const handleEditTask = (taskId: string, text: string, priority: Task['priority']) => {
+    updateDayData({
+      tasks: currentDayData.tasks.map(task =>
+        task.id === taskId ? { ...task, text, priority } : task
+      )
+    });
+  };
+
   const handleSaveMood = (moods: Mood['moods'], notes?: string) => {
     const moodEntry: Mood = {
       id: Date.now().toString(),
@@ -185,6 +193,7 @@ const DayDetails: React.FC = () => {
             onAddTask={handleAddTask}
             onToggleTask={handleToggleTask}
             onDeleteTask={handleDeleteTask}
+            onEditTask={handleEditTask}
           />
           
           <MoodTracker
